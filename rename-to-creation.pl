@@ -39,6 +39,6 @@ while ( my $name = shift @ARGV ) {
   if ( $ROPTS->{git} ) {
     system("git", "mv", $name, $newname) if $ROPTS->{x};
   } else {
-    system("mv", $name, $newname) if $ROPTS->{x};
+    system("mv", "-i", $name, $newname) if $ROPTS->{x};
   }
 }
