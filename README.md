@@ -30,7 +30,7 @@ remember, it won't actually do the move until you add the `--x` flag. and you ca
 rename-to-creation.pl old.jpg
 ```
 
-will look for a file name "old.jpg", use mdls to get its kMDItemContentCreationDate, and than rename the file. let's assume the file was created 2023-10-08 at 4:17pm (localtime). you'd see:
+will look for a file name "old.jpg", use mdls to get its kMDItemContentCreationDate, and than rename the file. let's assume the file was created 2023-10-08 at 4:17:11pm (localtime). you'd see:
 
 ```shell
 old.jpg
@@ -43,7 +43,7 @@ with the same file, if you ran `rename-to-creation.pl --time old.jpg` you'd see
 
 ```shell
 old.jpg
-mv "old.jpg" "20231008T1617 old.jpg"
+mv "old.jpg" "20231008T161711 old.jpg"
 ```
 
 
