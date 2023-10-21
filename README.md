@@ -48,4 +48,10 @@ old.jpg
 mv "old.jpg" "20231008T161711 old.jpg"
 ```
 
+### Weird filenames
 
+if you have filenames that start with a dash (-), add `--` first; this tells the commandline parser to stop looking for options and flags.
+
+```shell
+rename-to-creation.pl --time --email -- --\ file\ starting\ with\ dash.eml
+```
