@@ -23,7 +23,7 @@ while ( my $name = shift @ARGV ) {
   $name =~ s/^[.\/]+//;
   print $name;
   
-  open my $fh, "-|", ( 'mdls', '-n', 'kMDItemContentCreationDate', $name ) or die "Failed spawning $command: $!";
+  open my $fh, "-|", ( 'mdls', '-n', 'kMDItemContentCreationDate', '--', $name ) or die "Failed spawning $command: $!";
   my @output_lines = <$fh>;
   close $fh;
   #print scalar @output_lines, "\n";
