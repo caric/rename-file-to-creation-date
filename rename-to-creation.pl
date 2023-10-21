@@ -36,9 +36,11 @@ while ( my $name = shift @ARGV ) {
   }
   $newname .= " $name";
   print "mv \"$name\" \"$newname\"\n";
+  my @cmd = ();
   if ( $ROPTS->{git} ) {
-    system("git", "mv", $name, $newname) if $ROPTS->{x};
+    @cmd = ("git", "mv", $name, $newname);
   } else {
-    system("mv", "-i", $name, $newname) if $ROPTS->{x};
+    @cmd = ("mv", "-i", $name, $newname);
   }
+  system(@cmd) if $ROPTS->{x};
 }
