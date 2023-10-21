@@ -79,7 +79,7 @@ while ( my $name = shift @ARGV ) {
     $newname .= sprintf "T%02d%02d%02d", $creation_time->hour, $creation_time->minute, $creation_time->second;
   }
   $newname .= " $name";
-  print "; timezone ", $LocalTZ->name, "; mv \"./$name\" \"$newname\"\n";
+  print "; timezone ", $LocalTZ->name, "\n\$ mv \"./$name\" \"$newname\"\n";
   my @cmd = ();
   if ( $ROPTS->{git} ) {
     @cmd = ("git", "mv", "./$name", $newname);
