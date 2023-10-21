@@ -9,8 +9,10 @@ YYYMMDDTHHMMSS filename
 ## Syntax
 
 ```shell
-rename-to-creation.pl [--time] [--git] [-x] files
+rename-to-creation.pl [--time] [--git] [--email] [-x] files
 ```
+
+**--email** the file is an email; look for the "Date: " email header and convert its timezone, and use the email date if it's before the creation date. This is handy for emails you've dragged out of Mail.app to the finder; their creation time will be the time of the drag.
 
 **--git** prepend the `mv` command with `git`
 
