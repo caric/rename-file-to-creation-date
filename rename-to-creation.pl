@@ -20,6 +20,7 @@ my %months = (Jan => 0, Feb => 1, Mar => 2, Apr => 3, May => 4, Jun => 5, Jul =>
 my $LocalTZ = DateTime::TimeZone->new( name => 'local' );
 
 while ( my $name = shift @ARGV ) {
+  next if $name =~ m/\.DS_Store/;
   $name =~ s/^[.\/]+//;
   print $name;
   
