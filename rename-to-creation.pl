@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 use Getopt::Long;
-use Time::Local qw( timegm_modern timelocal_modern );
+use DateTime;
 
 $ROPTS = {
            x => 0,
@@ -17,8 +17,10 @@ GetOptions( $ROPTS,
            );
 my %months = (Jan => 0, Feb => 1, Mar => 2, Apr => 3, May => 4, Jun => 5, Jul => 6, Aug => 7, Sep => 8, Oct => 9, Nov => 10, Dec => 11 );
 
+my $LocalTZ = DateTime::TimeZone->new( name => 'local' );
+
 while ( my $name = shift @ARGV ) {
-  print $name, "\n";
+  print $name;
 
   my $creation = `mdls -n kMDItemContentCreationDate "$name"`;
   $creation =~ m/kMDItemContentCreationDate = (\d+)-(\d+)-(\d+)\s+(\d+):(\d+):(\d+)\s+/;
@@ -29,44 +31,44 @@ while ( my $name = shift @ARGV ) {
   my $hour = $4;
   my $min = $5;
   my $sec = $6;
-  # Convert to local time (note: if you run this while travelling you'll not get your home timezone!)
-  my $time = timegm_modern( $sec, $min, $hour, $day, $month-1, $year );
-  print $time, "\n";
+  my $creation_time = DateTime->new(year=>$1,month=>$2,day=>$3,hour=>$4,minute=>$5,second=>$6,time_zone=>"0000");
+  print "; creation (UTC): $creation_time";
 
   # check email headers
-  my $email_time = $time;
+  my $email_time = $creation_time;
   if ( $ROPTS->{email} ) {
-      if ( open(my $in, "<$name") ) {
-        while ( <$in> ) {
-          if ( m/\w{3}, (\d{1,2}) (\w{3}) (\d{4}) (\d\d):(\d\d):(\d\d) ((?:\+|-)\d{4})/ ) {
-            my $mday = $1;
-            my $email_month = $months{$2};
-            my $year = $3;
-            my $hour = $4;
-            my $min = $5;
-            my $sec = $6;
-            print "$mday $email_month $2\n";
-            $email_time = timelocal_modern( $sec, $min, $hour, $mday, $email_month, $year );
-            print $email_time, "\n";
-            close $in;
-            break;
-          }
+    if ( open(my $in, "<$name") ) {
+      while ( <$in> ) {
+        if ( m/^Date: (?:\w{3},)? (\d{1,2}) (\w{3}) (\d{4}) (\d\d):(\d\d):(\d\d) ((?:\+|-)\d{4})/ ) {
+          my $day = $1;
+          my $email_month = $months{$2};
+          my $year = $3;
+          my $hour = $4;
+          my $min = $5;
+          my $sec = $6;
+          my $tz_offset = $7;
+          $email_time = DateTime->new( year => $year, month=>$email_month+1, day=>$day, hour=>$hour, minute=>$min, second=>$sec, time_zone=>$tz_offset );
+          print "; email UTC: $email_time";
+          $email_time->set_time_zone("UTC");
+          close $in;
+          break;
+        }
       }
     }
   }
-  if ( $email_time < $time )
+  if ( DateTime->compare($email_time, $creation_time) < 0 )
   {
-    $time = $email_time;
-    print "switching to $email_time\n";
+    $creation_time = $email_time;
   }
-  ($sec,$min,$hour,$day,$month,$year,$wday,$yday) = localtime $time;
 
-  my $newname = sprintf "%04d%02d%02d", $year+1900, $month+1, $day;
+  # Convert to local time (note: if you run this while travelling you'll not get your home timezone! it will use your computer's current timezone)
+  $creation_time->set_time_zone($LocalTZ);
+  my $newname = sprintf "%04d%02d%02d", $creation_time->year, $creation_time->month, $creation_time->day;
   if ( $ROPTS->{time} ) {
-    $newname .= sprintf "T%02d%02d%02d", $hour, $min, $sec;
+    $newname .= sprintf "T%02d%02d%02d", $creation_time->hour, $creation_time->minute, $creation_time->second;
   }
   $newname .= " $name";
-  print "mv \"$name\" \"$newname\"\n";
+  print "; timezone ", $LocalTZ->name, "; mv \"$name\" \"$newname\"\n";
   my @cmd = ();
   if ( $ROPTS->{git} ) {
     @cmd = ("git", "mv", $name, $newname);
