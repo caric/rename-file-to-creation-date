@@ -79,9 +79,9 @@ while ( my $name = shift @ARGV ) {
   print "; timezone ", $LocalTZ->name, "; mv \"$name\" \"$newname\"\n";
   my @cmd = ();
   if ( $ROPTS->{git} ) {
-    @cmd = ("git", "mv", $name, $newname);
+    @cmd = ("git", "mv", "./$name", $newname);
   } else {
-    @cmd = ("mv", "-i", $name, $newname);
+    @cmd = ("mv", "-i", "./$name", $newname);
   }
   system(@cmd) if $ROPTS->{x};
 }
