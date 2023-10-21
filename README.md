@@ -55,3 +55,11 @@ if you have filenames that start with a dash (-), add `--` first; this tells the
 ```shell
 rename-to-creation.pl --time --email -- --\ file\ starting\ with\ dash.eml
 ```
+
+for really difficult names, try with find and xargs (only do this in a folder with no subfolders). I settled on this while trying to rename a folder with 8,000 old emails in it.
+
+```shell
+find . -type f -print0 |xargs -0 rename-to-creation.pl --email --time --
+```
+
+
