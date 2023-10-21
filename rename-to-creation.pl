@@ -21,7 +21,9 @@ my $LocalTZ = DateTime::TimeZone->new( name => 'local' );
 
 while ( my $name = shift @ARGV ) {
   next if $name =~ m/\.DS_Store/;
-  $name =~ s/^[.\/]+//;
+  next if $name =~ m/^\.[^\/]/; # try to skip dotfiles.
+  $name =~ s/^[.\/]+//; # strip leading ./ 
+  next if $name =~ m/\//; # try to skip anything in a subfolder.
   print $name;
   
   open my $fh, "-|", ( 'mdls', '-n', 'kMDItemContentCreationDate', '--', $name ) or die "Failed spawning $command: $!";
