@@ -28,9 +28,10 @@ while ( my $name = shift @ARGV ) {
   my $sec = $6;
   # Convert to local time (note: if you run this while travelling you'll not get your home timezone!)
   my $time = timegm_modern( $sec, $min, $hour, $day, $month-1, $year );
-  ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday) = localtime $time;
 
-  my $newname = sprintf "%04d%02d%02d", $year+1900, $month, $day;
+  ($sec,$min,$hour,$day,$month,$year,$wday,$yday) = localtime $time;
+
+  my $newname = sprintf "%04d%02d%02d", $year+1900, $month+1, $day;
   if ( $ROPTS->{time} ) {
     $newname .= sprintf "T%02d%02d%02d", $hour, $min, $sec;
   }
