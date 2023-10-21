@@ -20,10 +20,17 @@ my %months = (Jan => 0, Feb => 1, Mar => 2, Apr => 3, May => 4, Jun => 5, Jul =>
 my $LocalTZ = DateTime::TimeZone->new( name => 'local' );
 
 while ( my $name = shift @ARGV ) {
+  $name =~ s/^[.\/]+//;
   print $name;
-
-  my $creation = `mdls -n kMDItemContentCreationDate "$name"`;
-  $creation =~ m/kMDItemContentCreationDate = (\d+)-(\d+)-(\d+)\s+(\d+):(\d+):(\d+)\s+/;
+  
+  open my $fh, "-|", ( 'mdls', '-n', 'kMDItemContentCreationDate', $name ) or die "Failed spawning $command: $!";
+  my @output_lines = <$fh>;
+  close $fh;
+  #print scalar @output_lines, "\n";
+  #print "'", @output_lines, "'\n";
+  #chomp $output_lines[0];
+  #my $creation = `mdls -n kMDItemContentCreationDate "$name"`;
+  $output_lines[0] =~ m/kMDItemContentCreationDate = (\d+)-(\d+)-(\d+)\s+(\d+):(\d+):(\d+)\s+/ or die "Failed getting creation time: $!";
 
   my $year = $1;
   my $month = $2;
@@ -31,7 +38,8 @@ while ( my $name = shift @ARGV ) {
   my $hour = $4;
   my $min = $5;
   my $sec = $6;
-  my $creation_time = DateTime->new(year=>$1,month=>$2,day=>$3,hour=>$4,minute=>$5,second=>$6,time_zone=>"0000");
+  #print "$year-$month-$day $hour:$min:$sec\n";
+  my $creation_time = DateTime->new(year=>$year,month=>$month,day=>$day,hour=>$hour,minute=>$min,second=>$sec,time_zone=>"0000");
   print "; creation (UTC): $creation_time";
 
   # check email headers
