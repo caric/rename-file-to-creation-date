@@ -50,7 +50,7 @@ while ( my $name = shift @ARGV ) {
   if ( $ROPTS->{email} ) {
     if ( open(my $in, "<$name") ) {
       while ( <$in> ) {
-        if ( m/^Date: (?:\w{3},)? (\d{1,2}) (\w{3}) (\d{4}) (\d\d):(\d\d):(\d\d) ((?:\+|-)\d{4})/ ) {
+        if ( m/^Date: (?:\w{3}, )?(\d{1,2}) (\w{3}) (\d{4}) (\d\d):(\d\d):(\d\d) ((?:\+|-)\d{4})/ ) { # Date: Tue, 17 Oct 2023 14:28:10 +0000
           my $day = $1;
           my $email_month = $months{$2};
           my $year = $3;
