@@ -59,7 +59,7 @@ while ( my $name = shift @ARGV ) {
           my $sec = $6;
           my $tz_offset = $7;
           $email_time = DateTime->new( year => $year, month=>$email_month+1, day=>$day, hour=>$hour, minute=>$min, second=>$sec, time_zone=>$tz_offset );
-          print "; email UTC: $email_time";
+          print "; email $tz_offset: $email_time";
           $email_time->set_time_zone("UTC");
           close $in;
           break;
@@ -79,7 +79,7 @@ while ( my $name = shift @ARGV ) {
     $newname .= sprintf "T%02d%02d%02d", $creation_time->hour, $creation_time->minute, $creation_time->second;
   }
   $newname .= " $name";
-  print "; timezone ", $LocalTZ->name, "\n\$ mv \"./$name\" \"$newname\"\n";
+  print "; local tz ", $LocalTZ->name, "\n\$ mv \"./$name\" \"$newname\"\n";
   my @cmd = ();
   if ( $ROPTS->{git} ) {
     @cmd = ("git", "mv", "./$name", $newname);
