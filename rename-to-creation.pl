@@ -26,7 +26,7 @@ while ( my $name = shift @ARGV ) {
   next if $name =~ m/\//; # try to skip anything in a subfolder.
   print $name;
   
-  open my $fh, "-|", ( 'mdls', '-n', 'kMDItemContentCreationDate', '--', $name ) or die "Failed spawning $command: $!";
+  open my $fh, "-|", ( 'mdls', '-n', 'kMDItemContentCreationDate', '--', $name ) or die "Failed spawning mdls on '$name': $!";
   my @output_lines = <$fh>;
   close $fh;
   #print scalar @output_lines, "\n";
